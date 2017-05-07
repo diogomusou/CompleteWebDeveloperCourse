@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CodePad</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <style type="text/css">
+            html, body, h1, ul {
+                margin:0;
+                padding: 0;
+                font-family: sans-serif;
+            }
+            
+            header {
+                height: 40px;
+                background-color: black;
+                padding-top: 8px;
+                border-bottom: 1px solid white;
+            }
+            
+            #logo {
+                float: left;
+                padding: 3px 0 0 10px;
+                font-weight: bold;
+                font-size: 120%;
+                color: white;
+            }
+            
+            #buttonContainer {
+                width:242px;
+                margin: 0 auto;    
+            }
+            
+            .toggleButton {
+                float: left;
+                list-style: none;
+                border: 1px solid white;
+                border-right: none;
+                padding: 5px;
+                background-color: darkgray;
+            }
+            
+            #html {
+                border-radius: 5px 0 0 5px;
+            }
+            
+            #result {
+                border-radius: 0 5px 5px 0;
+                border-right: 1px solid black;
+            }
+            
+            .toggleButton:hover {
+                text-decoration: underline;
+            }
+            
+            .toggleButton:active {
+                background-color: antiquewhite;
+            }
+            
+            .html-active {
+                background-color: #AFF;
+            }
+            
+            .css-active {
+                background-color: #FAF;
+            }
+            
+            .js-active {
+                background-color: #FFA;
+            }
+            
+            .result-active {
+                background-color: #FFF;    
+            }
+            
+            #edit-area {
+                background-color: aqua;
+                width:100%;
+                height: 100%;    
+            }
+            
+            textarea {
+               box-sizing: border-box;
+                resize:none;
+                padding: 5px;
+            }
+            
+            .area {
+                float:left;
+                margin: 0;
+                border: none;
+                border-left: 1px solid black;
+                font-family: monospace;
+                font-size: 120%;
+            }
+            
+            .hidden {
+                display: none;
+            }
+
+        </style>
+    </head>
+    <body>
+        <header>
+            <div id="logo">
+                CodePad
+            </div>
+            
+            <div id="buttonContainer">
+                <ul>
+                    <li class="toggleButton html-active" id="html">HTML</li>
+                    <li class="toggleButton css-active" id="css">CSS</li>
+                    <li class="toggleButton" id="js">JavaScript</li>
+                    <li class="toggleButton result-active" id="result">Result</li>
+                </ul>
+            </div>
+        </header>
+        <div id="edit-area">
+            <textarea id="html-area" class="area" style="background-color:#AFF;"><h1>Hello World!</h1></textarea>
+            <textarea id="css-area" class="area" style="background-color:#FAF;">h1 { color : red; }</textarea>
+            <textarea id="js-area" class="area hidden" style="background-color:#FFA;">TURNED OFF FOR SECURITY REASONS</textarea>
+            <iframe id="result-area" class="area"></iframe>
+        </div>
+        
+        <script type="text/javascript">
+            if(jQuery) {
+                function updateFrame() {
+                    $("#result-area").contents().find("html").html("<head><style type='text/css'> " + $("#css-area").val() + " </style></head> <body>" + $("#html-area").val() + "</body>");
+                }
+                updateFrame();
+                $(".area").css('height', $(window).height() - $("header").height() - 12);
+                $(".area").css('width', $(window).width()/3-1);
+                
+                $(".toggleButton").click(function(){
+                    $(this).toggleClass($(this).attr("id")+"-active");
+                    var areaId = $(this).attr("id")+"-area";
+                    $("#"+areaId).toggleClass("hidden");
+                    var numberOfActiveAreas = 4 - $(".hidden").length;
+                    $(".area").css('width', $(window).width()/numberOfActiveAreas-1);
+                });
+                
+                $("textarea").on('change keyup paste', function(event){
+                    updateFrame();
+                    //document.getElementById("result-area").contentWindow.eval($("#js-area").val());
+                });
+      
+            } else {
+                alert("jQuery not found");
+            }
+        </script>
+    </body>
+</html>
