@@ -16,14 +16,14 @@
                 height: 40px;
                 background-color: black;
                 padding-top: 8px;
-                border-bottom: 1px solid white;
+                
             }
             
             #logo {
                 float: left;
                 padding: 3px 0 0 10px;
                 font-weight: bold;
-                font-size: 120%;
+                font-size: 140%;
                 color: white;
             }
             
@@ -38,7 +38,9 @@
                 border: 1px solid white;
                 border-right: none;
                 padding: 5px;
-                background-color: darkgray;
+                background-color: white;
+                cursor: default;
+                user-select: none;
             }
             
             #html {
@@ -58,20 +60,8 @@
                 background-color: antiquewhite;
             }
             
-            .html-active {
-                background-color: #AFF;
-            }
-            
-            .css-active {
-                background-color: #FAF;
-            }
-            
-            .js-active {
-                background-color: #FFA;
-            }
-            
-            .result-active {
-                background-color: #FFF;    
+            .active {
+                background-color: darkgray;
             }
             
             #edit-area {
@@ -80,19 +70,36 @@
                 height: 100%;    
             }
             
-            textarea {
+            #graybar {
+                background-color: darkgrey;
+                display: block;
+                position: absolute;
+                width:100%;
+                
+                z-index: -1;
+            }
+            
+            .area-title {
+                text-align: center;
+                background-color: darkgray;
+            }
+            
+            textarea, iframe {
                box-sizing: border-box;
                 resize:none;
                 padding: 5px;
+                font-family: monospace;
+                font-size: 120%;
+                width: 100%;
+                border: none;
             }
             
             .area {
                 float:left;
                 margin: 0;
                 border: none;
-                border-left: 1px solid black;
-                font-family: monospace;
-                font-size: 120%;
+                border-left: 2px solid black;
+                
             }
             
             .hidden {
@@ -109,35 +116,38 @@
             
             <div id="buttonContainer">
                 <ul>
-                    <li class="toggleButton html-active" id="html">HTML</li>
-                    <li class="toggleButton css-active" id="css">CSS</li>
+                    <li class="toggleButton active" id="html">HTML</li>
+                    <li class="toggleButton active" id="css">CSS</li>
                     <li class="toggleButton" id="js">JavaScript</li>
-                    <li class="toggleButton result-active" id="result">Result</li>
+                    <li class="toggleButton active" id="result">Result</li>
                 </ul>
             </div>
         </header>
         <div id="edit-area">
-            <textarea id="html-area" class="area" style="background-color:#AFF;"><h1>Hello World!</h1></textarea>
-            <textarea id="css-area" class="area" style="background-color:#FAF;">h1 { color : red; }</textarea>
-            <textarea id="js-area" class="area hidden" style="background-color:#FFA;">TURNED OFF FOR SECURITY REASONS</textarea>
-            <iframe id="result-area" class="area"></iframe>
+           <h1 id="graybar"></h1>
+            <div class="area" id="html-area"><h1 class="area-title">HTML</h1><textarea id="html-textarea"><h1>Hello World!</h1></textarea></div>
+            <div class="area" id="css-area"><h1 class="area-title">CSS</h1><textarea id="css-textarea">h1 { color : red; }</textarea></div>
+            <div class="area hidden" id="js-area"><h1 class="area-title">JavaScript</h1><textarea id="js-textarea">TURNED OFF FOR SECURITY REASONS</textarea></div>
+            <div class="area" id="result-area"><h1 class="area-title">Result</h1><iframe id="result-iframe"></iframe>
         </div>
         
         <script type="text/javascript">
             if(jQuery) {
                 function updateFrame() {
-                    $("#result-area").contents().find("html").html("<head><style type='text/css'> " + $("#css-area").val() + " </style></head> <body>" + $("#html-area").val() + "</body>");
+                    $("#result-iframe").contents().find("html").html("<head><style type='text/css'> " + $("#css-textarea").val() + " </style></head> <body>" + $("#html-textarea").val() + "</body>");
                 }
                 updateFrame();
                 $(".area").css('height', $(window).height() - $("header").height() - 12);
-                $(".area").css('width', $(window).width()/3-1);
+                $("textarea").css('height', $(".area").height()-$(".area-title").height() );
+                $(".area").css('width', $(window).width()/3-2);
+                $("#graybar").css("height", $(".area-title").height());
                 
                 $(".toggleButton").click(function(){
-                    $(this).toggleClass($(this).attr("id")+"-active");
+                    $(this).toggleClass("active");
                     var areaId = $(this).attr("id")+"-area";
                     $("#"+areaId).toggleClass("hidden");
                     var numberOfActiveAreas = 4 - $(".hidden").length;
-                    $(".area").css('width', $(window).width()/numberOfActiveAreas-1);
+                    $(".area").css('width', $(window).width()/numberOfActiveAreas-2);
                 });
                 
                 $("textarea").on('change keyup paste', function(event){
